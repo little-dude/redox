@@ -1,6 +1,9 @@
+#![feature(rand)]
+extern crate rand;
 extern crate event;
 extern crate netutils;
 extern crate syscall;
+extern crate smoltcp;
 
 use event::EventQueue;
 use std::cell::RefCell;
@@ -13,6 +16,7 @@ use syscall::{Packet, SchemeMut, EWOULDBLOCK};
 
 use scheme::EthernetScheme;
 
+mod device;
 mod scheme;
 
 fn main() {
@@ -33,7 +37,16 @@ fn main() {
         let socket_net = socket.clone();
         let scheme_net = scheme.clone();
         let todo_net = todo.clone();
-        event_queue.add(network_fd, move |_count: usize| -> Result<Option<()>> {
+
+        event_queue.add(
+
+            // We monitor the file corresponding to the network scheme
+            network_fd,
+
+            // Whenever something occurs on the network scheme, this call back is called
+            move |_count: usize| -> Result<Option<()>> {
+
+            // Read frames from the network scheme. If there is none, we're done.
             if scheme_net.borrow_mut().input()? > 0 {
                 let mut todo = todo_net.borrow_mut();
                 let mut i = 0;

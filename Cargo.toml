@@ -26,11 +26,8 @@ members = [
     "programs/tar",
     "programs/userutils",
     "schemes/ethernetd",
-    "schemes/ipd",
     "schemes/orbital",
     "schemes/ptyd",
     "schemes/randd",
     "schemes/redoxfs",
-    "schemes/tcpd",
-    "schemes/udpd"
 ]
